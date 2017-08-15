@@ -33,7 +33,6 @@ This role executes the following settings.
 ## Role variables
 ```
 kubernetes_master:
-  mgmt_ip: 192.168.1.115                  # ip of target for management network
   hostname: k8s-master                    # hostname of target
   api_port: 8080                          # listen port of api server
   kubelet_port: 10250                     # listen port for kubelet service of minion node
@@ -42,8 +41,7 @@ kubernetes_master:
     put_dir: /etc/kubernetes/ssl          # location of certification and key
     valid_term: 7305                      # valid term of certification
     common_name: 192.168.1.115            # common name for registration of certification
-  etcd:
-    mgmt_dir: /kube-centos/network        # management directory of etcd
+  etcd_mgmt_dir: /kube-centos/network        # management directory of etcd
 ```
 
 ## Dependencies

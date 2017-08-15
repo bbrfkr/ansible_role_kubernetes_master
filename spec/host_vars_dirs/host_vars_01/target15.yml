@@ -1,14 +1,14 @@
 ---
 kubernetes_common:
-  hostname: k8s-master
+  master:
+    hostname: k8s-master
+    api_port: 8080
   hosts:
     - name: k8s-master
       ip: 192.168.1.115
   allow_privileged: true
-  api_port: 8080
 
 kubernetes_master:
-  mgmt_ip: 192.168.1.115
   hostname: k8s-master
   api_port: 8080
   kubelet_port: 10250
@@ -17,5 +17,4 @@ kubernetes_master:
     put_dir: /etc/kubernetes/ssl
     valid_term: 7305
     common_name: 192.168.1.115   
-  etcd:
-    mgmt_dir: /kube-centos/network
+  etcd_mgmt_dir: /kube-centos/network

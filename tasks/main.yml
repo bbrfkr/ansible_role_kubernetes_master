@@ -38,24 +38,24 @@
   become: yes
 
 - name: check management dir of etcd is created
-  shell: etcdctl ls -r | grep -e "^{{ kubernetes_master.etcd.mgmt_dir }}$"
+  shell: etcdctl ls -r | grep -e "^{{ kubernetes_master.etcd_mgmt_dir }}$"
   changed_when: false
   failed_when: false
   register: reg_etcd_dir
 
 - name: create management dir of etcd
-  shell: etcdctl mkdir {{ kubernetes_master.etcd.mgmt_dir }} 
+  shell: etcdctl mkdir {{ kubernetes_master.etcd_mgmt_dir }} 
   when: reg_etcd_dir.rc != 0
 
 - name: check key of etcd is created
-  shell: etcdctl get {{ kubernetes_master.etcd.mgmt_dir }}/config
+  shell: etcdctl get {{ kubernetes_master.etcd_mgmt_dir }}/config
   changed_when: false
   failed_when: false
   register: reg_etcd_key
 
 - name: create key of etcd
   shell: >
-     etcdctl mk {{ kubernetes_master.etcd.mgmt_dir }}/config \
+     etcdctl mk {{ kubernetes_master.etcd_mgmt_dir }}/config \
       "{ \"Network\": \"172.30.0.0/16\", \"SubnetLen\": 24, \"Backend\": { \"Type\": \"vxlan\" } }"
   when: reg_etcd_key.rc != 0
 

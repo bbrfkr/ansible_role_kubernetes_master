@@ -5,7 +5,7 @@ FLANNEL_ETCD_ENDPOINTS="http://{{ kubernetes_master.hostname }}:2379"
 
 # etcd config key.  This is the configuration key that flannel queries
 # For address range assignment
-FLANNEL_ETCD_PREFIX="{{ kubernetes_master.etcd.mgmt_dir }}"
+FLANNEL_ETCD_PREFIX="{{ kubernetes_master.etcd_mgmt_dir }}"
 
 # Any additional options that you want to pass
 #FLANNEL_OPTIONS=""

@@ -1,0 +1,86 @@
+---
+- name: put etcd config
+  copy:
+    src: etcd.conf
+    dest: /etc/etcd/etcd.conf
+  become: yes
+  notify: restart etcd
+
+- name: create directory for certification and key
+  file:
+    path: "{{ kubernetes_master.cert_and_key.put_dir }}"
+    state: directory
+  become: yes
+
+- name: create certification and key
+  shell: >
+    openssl req -newkey rsa:2048 -nodes -sha256 \
+      -keyout {{ kubernetes_master.cert_and_key.put_dir }}/apiserver.key \
+      -x509 -days {{ kubernetes_master.cert_and_key.valid_term }} \
+      -out {{ kubernetes_master.cert_and_key.put_dir }}/apiserver.crt \
+      -subj "/CN={{ kubernetes_master.cert_and_key.common_name }}"
+  args:
+    creates: "{{ kubernetes_master.cert_and_key.put_dir }}/apiserver.key"
+  become: yes
+
+- name: put apiserver config
+  template:
+    src: apiserver.j2
+    dest: /etc/kubernetes/apiserver
+  become: yes
+  notify: restart kube-apiserver
+
+- name: start and enable etcd service
+  service:
+    name: etcd
+    state: started
+    enabled: yes
+  become: yes
+
+- name: check management dir of etcd is created
+  shell: etcdctl ls -r | grep -e "^{{ kubernetes_master.etcd.mgmt_dir }}$"
+  changed_when: false
+  failed_when: false
+  register: reg_etcd_dir
+
+- name: create management dir of etcd
+  shell: etcdctl mkdir {{ kubernetes_master.etcd.mgmt_dir }} 
+  when: reg_etcd_dir.rc != 0
+
+- name: check key of etcd is created
+  shell: etcdctl get {{ kubernetes_master.etcd.mgmt_dir }}/config
+  changed_when: false
+  failed_when: false
+  register: reg_etcd_key
+
+- name: create key of etcd
+  shell: >
+     etcdctl mk {{ kubernetes_master.etcd.mgmt_dir }}/config \
+      "{ \"Network\": \"172.30.0.0/16\", \"SubnetLen\": 24, \"Backend\": { \"Type\": \"vxlan\" } }"
+  when: reg_etcd_key.rc != 0
+
+- name: put flannel config
+  template:
+    src: flanneld.j2
+    dest: /etc/sysconfig/flanneld
+  become: yes
+  notify: restart flanneld
+
+- name: put kubernetes controller-manager config
+  template:
+    src: controller-manager.j2
+    dest: /etc/kubernetes/controller-manager
+  become: yes
+  notify: restart kube-controller-manager
+
+- name: enable and start services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  become: yes
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+    - flanneld

@@ -1,0 +1,24 @@
+---
+- name: restart etcd
+  service:
+    name: etcd
+    state: restarted
+  become: yes
+
+- name: restart kube-apiserver
+  service:
+    name: kube-apiserver
+    state: restarted
+  become: yes
+
+- name: restart kube-controller-manager
+  service:
+    name: kube-controller-manager
+    state: restarted
+  become: yes
+
+- name: restart flanneld
+  service:
+    name: flanneld
+    state: restarted
+  become: yes

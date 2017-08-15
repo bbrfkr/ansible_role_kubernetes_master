@@ -6,6 +6,7 @@ This is an Ansible role. This role executes Kubernetes setting of master node.
 This role executes the following settings.
 
 * Kubernetes setting
+  * put kubernetes common setting
   * create certification and key for service account
   * put api server config
   * put controller-manager config
@@ -41,7 +42,8 @@ kubernetes_master:
     put_dir: /etc/kubernetes/ssl          # location of certification and key
     valid_term: 7305                      # valid term of certification
     common_name: 192.168.1.115            # common name for registration of certification
-  etcd_mgmt_dir: /kube-centos/network        # management directory of etcd
+  etcd_mgmt_dir: /kube-centos/network     # management directory of etcd
+  allow_privileged: true                  # whether allow to create privileged container   
 ```
 
 ## Dependencies

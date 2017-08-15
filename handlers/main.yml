@@ -17,6 +17,12 @@
     state: restarted
   become: yes
 
+- name: restart kube-scheduler
+  service:
+    name: kube-scheduler
+    state: restarted
+  become: yes
+
 - name: restart flanneld
   service:
     name: flanneld

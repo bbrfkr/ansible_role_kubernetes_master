@@ -1,4 +1,14 @@
 ---
+- name: put kubernetes common config
+  template:
+    src: config.j2
+    dest: /etc/kubernetes/config
+  become: yes
+  notify:
+    - restart kube-apiserver
+    - restart kube-controller-manager
+    - restart kube-scheduler
+
 - name: put etcd config
   copy:
     src: etcd.conf

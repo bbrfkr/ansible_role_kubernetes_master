@@ -47,7 +47,7 @@ kubernetes_master:
 ```
 
 ## Dependencies
-None
+- [bbrfkr.kubernetes_common](https://galaxy.ansible.com/bbrfkr/kubernetes_common/)
 
 ## Build status
 |branch|status|
